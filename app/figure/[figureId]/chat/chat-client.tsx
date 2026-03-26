@@ -8,15 +8,18 @@ interface ChatClientProps {
   figureId: string;
   figureName: string;
   occupation: string;
+  era: string;
   suggestedTopics: string[];
   imageUrl?: string;
+  systemPrompt: string;
+  firstMessage: string;
 }
 
 type Phase = "ready" | "loading" | "active" | "ended";
 type Mode = "listening" | "speaking" | "idle";
 interface TranscriptEntry { role: "user" | "ai"; message: string; }
 
-export function ChatClient({ figureId, figureName, occupation, suggestedTopics, imageUrl }: ChatClientProps) {
+export function ChatClient({ figureId, figureName, occupation, era, suggestedTopics, imageUrl, systemPrompt, firstMessage }: ChatClientProps) {
   const [phase, setPhase] = useState<Phase>("ready");
   const [mode, setMode] = useState<Mode>("idle");
   const [error, setError] = useState("");
@@ -38,15 +41,13 @@ export function ChatClient({ figureId, figureName, occupation, suggestedTopics, 
       return;
     }
 
-    // Get signed URL + persona from our API
+    // Get signed URL from our API
     let signedUrl: string;
-    let personaPrompt: string;
-    let firstMessage: string;
     try {
       const res = await fetch("/api/start-conversation", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ figureId }),
+        body: JSON.stringify({ figureId, systemPrompt, firstMessage }),
       });
       const data = await res.json();
       if (!res.ok) {
@@ -55,8 +56,6 @@ export function ChatClient({ figureId, figureName, occupation, suggestedTopics, 
         return;
       }
       signedUrl = data.signedUrl;
-      personaPrompt = data.personaPrompt;
-      firstMessage = data.firstMessage;
     } catch {
       setError("Could not connect to the voice service.");
       setPhase("ready");
@@ -71,7 +70,7 @@ export function ChatClient({ figureId, figureName, occupation, suggestedTopics, 
         signedUrl,
         overrides: {
           agent: {
-            prompt: { prompt: personaPrompt },
+            prompt: { prompt: systemPrompt },
             firstMessage,
           },
         },

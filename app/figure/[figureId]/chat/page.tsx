@@ -28,8 +28,11 @@ export default async function ChatPage(props: { params: Promise<{ figureId: stri
         figureId={figureId}
         figureName={figure.fullName}
         occupation={figure.occupation}
+        era={figure.era}
         suggestedTopics={figure.suggestedTopics}
         imageUrl={figure.imageUrl}
+        systemPrompt={figure.systemPrompt}
+        firstMessage={`I am ${figure.fullName} — ${figure.occupation} of ${figure.era}. It is a remarkable thing to speak with you across the ages. What would you like to know?`}
       />
     </div>
   );

@@ -1,5 +1,4 @@
 import { NextRequest } from "next/server";
-import { devStore } from "@/lib/dev-store";
 import { checkRateLimit, getIP } from "@/lib/rate-limit";
 
 export async function POST(request: NextRequest) {
@@ -12,14 +11,8 @@ export async function POST(request: NextRequest) {
   }
 
   const { figureId } = await request.json();
-
   if (!figureId) {
     return Response.json({ error: "Figure ID is required." }, { status: 400 });
-  }
-
-  const figure = devStore.figures.get(figureId);
-  if (!figure || figure.status !== "ready") {
-    return Response.json({ error: "Figure not found or still being researched." }, { status: 404 });
   }
 
   if (!process.env.ELEVENLABS_API_KEY) {
@@ -47,15 +40,5 @@ export async function POST(request: NextRequest) {
 
   const { signed_url } = await elevenRes.json() as { signed_url: string };
 
-  // Build a figure-specific opening line
-  const firstName = figure.fullName.split(" ")[0];
-  const firstMessage = `I am ${figure.fullName} — ${figure.occupation} of ${figure.era}. It is a remarkable thing to speak with you across the ages. What would you like to know?`;
-
-  return Response.json({
-    signedUrl: signed_url,
-    personaPrompt: figure.systemPrompt,
-    firstMessage,
-    figureName: figure.fullName,
-    firstName,
-  });
+  return Response.json({ signedUrl: signed_url });
 }
