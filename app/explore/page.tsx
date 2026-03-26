@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { ExploreClient } from "./explore-client";
 
 export default function ExplorePage() {
@@ -14,7 +15,9 @@ export default function ExplorePage() {
         We&apos;ll research them and connect you in seconds.
       </p>
 
-      <ExploreClient />
+      <Suspense>
+        <ExploreClient />
+      </Suspense>
 
       {/* Suggestions */}
       <div className="mt-16">
