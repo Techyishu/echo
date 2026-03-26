@@ -91,7 +91,25 @@ export async function POST(request: NextRequest) {
     // Fall through — GPT-4o will use training data
   }
 
-  // ── 2. GPT-4o: extract persona ──
+  // ── 2. Wikipedia: get photo ──
+  let imageUrl = "";
+  try {
+    const summaryRes = await fetch(
+      `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(slug)}`,
+      { headers: { "User-Agent": "Echo/1.0 (historical-figure chatbot)" } }
+    );
+    if (summaryRes.ok) {
+      const summary = await summaryRes.json() as {
+        thumbnail?: { source: string };
+        originalimage?: { source: string };
+      };
+      imageUrl = summary.originalimage?.source ?? summary.thumbnail?.source ?? "";
+    }
+  } catch {
+    // no photo — silently fall through
+  }
+
+  // ── 3. GPT-4o: extract persona ──
   const eraStyle = getEraStyle(""); // will be refined by GPT output
 
   const extractionPrompt = wikiMarkdown
@@ -169,6 +187,7 @@ Return ONLY valid JSON in this exact format:
     slug,
     status: "ready",
     ...parsed,
+    imageUrl,
     created_at: now,
   });
 

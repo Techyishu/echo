@@ -29,6 +29,7 @@ export default async function ChatPage(props: { params: Promise<{ figureId: stri
         figureName={figure.fullName}
         occupation={figure.occupation}
         suggestedTopics={figure.suggestedTopics}
+        imageUrl={figure.imageUrl}
       />
     </div>
   );

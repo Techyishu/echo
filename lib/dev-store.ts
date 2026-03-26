@@ -22,6 +22,9 @@ export interface StoredFigure {
   suggestedTopics: string[];
   systemPrompt: string;      // full prompt sent to ElevenLabs agent
 
+  // Photo (from Wikipedia)
+  imageUrl?: string;
+
   // Transcript (saved after conversation)
   transcript?: { role: "user" | "ai"; message: string }[];
 

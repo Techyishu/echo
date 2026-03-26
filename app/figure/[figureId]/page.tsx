@@ -25,8 +25,22 @@ export default async function FigurePage(props: { params: Promise<{ figureId: st
 
       {/* Header */}
       <div className="border-b border-border pb-8 mb-8">
-        <div className="flex flex-wrap items-start justify-between gap-4">
-          <div>
+        <div className="flex flex-wrap items-start gap-8">
+
+          {/* Portrait */}
+          {figure.imageUrl && (
+            <div className="shrink-0 w-36 h-44 border border-border overflow-hidden bg-muted">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={figure.imageUrl}
+                alt={figure.fullName}
+                className="w-full h-full object-cover object-top"
+              />
+            </div>
+          )}
+
+          {/* Meta */}
+          <div className="flex-1 min-w-0">
             <div className="flex items-center gap-3 mb-3">
               <span className="font-mono text-[10px] tracking-widest text-primary uppercase border border-primary/30 px-2 py-0.5">
                 {figure.occupation}
@@ -38,16 +52,16 @@ export default async function FigurePage(props: { params: Promise<{ figureId: st
             <h1 className="font-display font-black text-4xl md:text-5xl text-foreground uppercase leading-none mb-2">
               {figure.fullName}
             </h1>
-            <p className="font-mono text-sm text-muted-foreground">
+            <p className="font-mono text-sm text-muted-foreground mb-6">
               {figure.years} · {figure.era}
             </p>
+            <Link
+              href={`/figure/${figureId}/chat`}
+              className="inline-flex items-center gap-3 bg-primary text-primary-foreground font-display font-bold px-8 py-4 text-sm uppercase tracking-widest hover:bg-primary/90 transition-colors"
+            >
+              Start Conversation →
+            </Link>
           </div>
-          <Link
-            href={`/figure/${figureId}/chat`}
-            className="inline-flex items-center gap-3 bg-primary text-primary-foreground font-display font-bold px-8 py-4 text-sm uppercase tracking-widest hover:bg-primary/90 transition-colors shrink-0"
-          >
-            Start Conversation →
-          </Link>
         </div>
       </div>
 

@@ -9,13 +9,14 @@ interface ChatClientProps {
   figureName: string;
   occupation: string;
   suggestedTopics: string[];
+  imageUrl?: string;
 }
 
 type Phase = "ready" | "loading" | "active" | "ended";
 type Mode = "listening" | "speaking" | "idle";
 interface TranscriptEntry { role: "user" | "ai"; message: string; }
 
-export function ChatClient({ figureId, figureName, occupation, suggestedTopics }: ChatClientProps) {
+export function ChatClient({ figureId, figureName, occupation, suggestedTopics, imageUrl }: ChatClientProps) {
   const [phase, setPhase] = useState<Phase>("ready");
   const [mode, setMode] = useState<Mode>("idle");
   const [error, setError] = useState("");
@@ -128,10 +129,17 @@ export function ChatClient({ figureId, figureName, occupation, suggestedTopics }
     return (
       <div className="space-y-8">
         <div className="border border-border p-8 text-center">
-          <div className="w-20 h-20 border-2 border-primary/30 rounded-full mx-auto flex items-center justify-center mb-6">
-            <span className="font-display font-black text-2xl text-primary/60">
-              {firstName.slice(0, 2).toUpperCase()}
-            </span>
+          <div className="w-24 h-28 border border-border mx-auto overflow-hidden mb-6 bg-muted">
+            {imageUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={imageUrl} alt={figureName} className="w-full h-full object-cover object-top" />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center border-2 border-primary/30">
+                <span className="font-display font-black text-2xl text-primary/60">
+                  {firstName.slice(0, 2).toUpperCase()}
+                </span>
+              </div>
+            )}
           </div>
           <h2 className="font-display font-black text-3xl md:text-4xl text-foreground uppercase leading-none mb-3">
             {firstName}<span className="text-primary">.</span>
@@ -211,13 +219,18 @@ export function ChatClient({ figureId, figureName, occupation, suggestedTopics }
           {/* Voice indicator */}
           <div className="flex flex-col items-center gap-4 py-6">
             <div
-              className={`w-24 h-24 border-2 rounded-full flex items-center justify-center transition-all duration-300 ${
+              className={`w-24 h-24 border-2 rounded-full flex items-center justify-center transition-all duration-300 overflow-hidden ${
                 mode === "speaking"
                   ? "border-primary bg-primary/10 scale-110"
                   : mode === "listening"
                   ? "border-foreground/40 bg-foreground/5 scale-105"
                   : "border-border"
               }`}
+              style={imageUrl && mode === "idle" ? {
+                backgroundImage: `url(${imageUrl})`,
+                backgroundSize: "cover",
+                backgroundPosition: "center top",
+              } : undefined}
             >
               {mode === "speaking" && (
                 <div className="flex gap-1 items-end h-8">
@@ -234,9 +247,11 @@ export function ChatClient({ figureId, figureName, occupation, suggestedTopics }
                 <div className="w-8 h-8 border-2 border-foreground/40 rounded-full animate-pulse" />
               )}
               {mode === "idle" && (
-                <span className="font-display font-black text-xl text-border">
-                  {firstName.slice(0, 2).toUpperCase()}
-                </span>
+                imageUrl ? null : (
+                  <span className="font-display font-black text-xl text-border">
+                    {firstName.slice(0, 2).toUpperCase()}
+                  </span>
+                )
               )}
             </div>
 
